@@ -7,7 +7,12 @@ const handle = "crm://deals/detail/deal-1" as const;
 
 describe("invokeAction", () => {
   it("invokes successfully", async () => {
-    const rt = createAgentRuntime();
+    const rt = createAgentRuntime({
+      defaultPolicy: {
+        mode: "defaultDeny",
+        rules: [{ roles: ["admin"], actions: ["save"] }]
+      }
+    });
     rt.registerSurface({
       manifest: { handle, title: "Deal", capabilities: ["act"] }
     });
@@ -23,7 +28,8 @@ describe("invokeAction", () => {
     const result = await rt.invokeAction({
       handle,
       action: "save",
-      input: { id: 42 }
+      input: { id: 42 },
+      context: { sessionId: "test", roles: ["admin"] }
     });
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.data).toEqual({ saved: 42 });

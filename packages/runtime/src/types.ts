@@ -9,7 +9,10 @@ import type {
 export type { AgentSessionContext, InvokeActionRequest };
 import type { ZodType, ZodTypeDef } from "zod";
 
+import type { PolicyConfig, PolicyProvider } from "./policy/types.js";
+
 export interface AgentRuntimeConfig {
+  defaultPolicy?: PolicyConfig;
   scheduler?: (fn: () => void) => void;
   logger?: AgentLogger;
   maxCatalogEntries?: number;

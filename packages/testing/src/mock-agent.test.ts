@@ -6,7 +6,12 @@ import { createMockAgent } from "./mock-agent.js";
 
 describe("createMockAgent", () => {
   it("invokes through runtime", async () => {
-    const rt = createTestRuntime();
+    const rt = createTestRuntime({
+      defaultPolicy: {
+        mode: "defaultDeny",
+        rules: [{ roles: ["agent"], actions: ["ping"] }]
+      }
+    });
     const handle = "app://demo/page/main" as const;
     rt.registerSurface({
       manifest: { handle, title: "Main", capabilities: ["act"] }
@@ -20,7 +25,7 @@ describe("createMockAgent", () => {
       handler: () => ({ pong: true })
     });
 
-    const agent = createMockAgent(rt);
+    const agent = createMockAgent(rt, { sessionId: "s1", roles: ["agent"] });
     const result = await agent.invoke({ handle, action: "ping", input: {} });
     expect(result.ok).toBe(true);
   });

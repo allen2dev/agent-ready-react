@@ -1,0 +1,25 @@
+{
+  "name": "@agent-ready/cli",
+  "version": "0.0.0",
+  "type": "module",
+  "bin": {
+    "agent-ready": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "test": "vitest run",
+    "lint": "node -e \"process.exit(0)\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@agent-ready/schema": "workspace:*",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@agent-ready/tsconfig": "workspace:*",
+    "@agent-ready/vitest-config": "workspace:*",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

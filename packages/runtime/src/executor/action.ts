@@ -8,13 +8,17 @@ import type { ActionRegistry } from "../registry/action.js";
 import type { SurfaceRegistry } from "../registry/surface.js";
 import type { ActionHandlerContext } from "../types.js";
 import type { TypedEventBus } from "../events.js";
+import type { PolicyProvider } from "../policy/types.js";
 
 export async function invokeAction(
   surfaces: SurfaceRegistry,
   actions: ActionRegistry,
   events: TypedEventBus,
   request: InvokeActionRequest,
-  options: { actionTimeoutMs?: number } = {}
+  options: {
+    actionTimeoutMs?: number;
+    policy?: PolicyProvider;
+  } = {}
 ): Promise<AgentResult<unknown>> {
   const start = performance.now();
   const { handle, action: actionName, input, context } = request;
@@ -38,6 +42,25 @@ export async function invokeAction(
         `Action not found: ${actionName}`
       )
     };
+  }
+
+  if (options.policy) {
+    const allowed = await options.policy.canInvokeAction({
+      handle,
+      action: actionName,
+      session: context
+    });
+    if (!allowed) {
+      const error = agentError("AGENT_POLICY_DENIED", "Policy denied action");
+      events.emit("policy:denied", { handle, action: actionName });
+      events.emit("action:invoked", {
+        handle,
+        action: actionName,
+        ok: false,
+        error
+      });
+      return { ok: false, error };
+    }
   }
 
   const validation = validateAgentInput(registered.definition.input, input);

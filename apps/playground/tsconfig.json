@@ -1,0 +1,8 @@
+{
+  "extends": "@agent-ready/tsconfig/react.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true
+  }
+}

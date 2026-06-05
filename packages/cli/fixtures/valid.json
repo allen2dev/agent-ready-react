@@ -1,0 +1,5 @@
+{
+  "handle": "app://demo/page/main",
+  "title": "Main Page",
+  "capabilities": ["act", "read"]
+}

@@ -8,6 +8,8 @@ import { ActionRegistry } from "./registry/action.js";
 import { buildCatalog, toPromptContext } from "./catalog/index.js";
 import { invokeAction } from "./executor/action.js";
 import { TypedEventBus, type AgentRuntimeEventMap } from "./events.js";
+import { createPolicyEngine } from "./policy/engine.js";
+import type { PolicyProvider } from "./policy/types.js";
 import type {
   AgentCatalog,
   AgentRuntimeConfig,
@@ -27,13 +29,16 @@ export interface AgentRuntime {
     event: E,
     listener: (payload: AgentRuntimeEventMap[E]) => void
   ): () => void;
+  setPolicyProvider(provider: PolicyProvider): void;
 }
 
 export function createAgentRuntime(config: AgentRuntimeConfig = {}): AgentRuntime {
   const surfaces = new SurfaceRegistry();
   const actions = new ActionRegistry();
   const events = new TypedEventBus();
-  const scheduler = config.scheduler ?? ((fn) => queueMicrotask(fn));
+  let policy: PolicyProvider | undefined = config.defaultPolicy
+    ? createPolicyEngine(config.defaultPolicy)
+    : createPolicyEngine({ mode: "defaultDeny" });
 
   return {
     registerSurface(entry) {
@@ -68,12 +73,17 @@ export function createAgentRuntime(config: AgentRuntimeConfig = {}): AgentRuntim
 
     async invokeAction<T>(request: InvokeActionRequest) {
       return invokeAction(surfaces, actions, events, request, {
-        actionTimeoutMs: config.actionTimeoutMs
+        actionTimeoutMs: config.actionTimeoutMs,
+        policy
       }) as Promise<AgentResult<T>>;
     },
 
     on(event, listener) {
       return events.on(event, listener);
+    },
+
+    setPolicyProvider(provider) {
+      policy = provider;
     }
   };
 }
