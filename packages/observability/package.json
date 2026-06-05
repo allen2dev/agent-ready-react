@@ -1,32 +1,20 @@
 {
-  "name": "@agent-ready/react",
+  "name": "@agent-ready/observability",
   "version": "0.0.0",
-  "publishConfig": { "access": "public" },
   "type": "module",
   "sideEffects": false,
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "test": "vitest run",
     "lint": "node -e \"process.exit(0)\"",
-    "typecheck": "tsc --noEmit",
-    "size": "size-limit"
+    "typecheck": "tsc --noEmit"
   },
-  "sizeLimit": [
-    {
-      "path": "dist/index.js",
-      "limit": "12 KB"
-    }
-  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
-  },
-  "peerDependencies": {
-    "react": "^18.3.0 || ^19.0.0",
-    "react-dom": "^18.3.0 || ^19.0.0"
   },
   "dependencies": {
     "@agent-ready/runtime": "workspace:*",
@@ -35,17 +23,9 @@
   "devDependencies": {
     "@agent-ready/tsconfig": "workspace:*",
     "@agent-ready/vitest-config": "workspace:*",
-    "@testing-library/react": "^16.1.0",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
-    "jsdom": "^25.0.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8",
-    "zod": "^3.24.1",
-    "size-limit": "^11.1.6",
-    "@size-limit/esbuild": "^11.1.6"
+    "zod": "^3.24.1"
   }
 }

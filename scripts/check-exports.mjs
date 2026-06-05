@@ -9,7 +9,9 @@ const packages = [
   "packages/testing/dist/index.js",
   "packages/testing/dist/index.d.ts",
   "packages/react/dist/index.js",
-  "packages/react/dist/index.d.ts"
+  "packages/react/dist/index.d.ts",
+  "packages/observability/dist/index.js",
+  "packages/devtools/dist/index.js"
 ];
 
 for (const file of packages) {

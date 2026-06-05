@@ -1,0 +1,32 @@
+{
+  "name": "eslint-plugin-agent-ready",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --clean",
+    "test": "vitest run",
+    "lint": "node -e \"process.exit(0)\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@typescript-eslint/utils": "^8.18.1"
+  },
+  "devDependencies": {
+    "@agent-ready/tsconfig": "workspace:*",
+    "@agent-ready/vitest-config": "workspace:*",
+    "@typescript-eslint/rule-tester": "^8.18.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0"
+  }
+}

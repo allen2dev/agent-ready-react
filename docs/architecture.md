@@ -128,7 +128,7 @@ SDK **不包含业务逻辑**；它只提供注册、编目、路由、校验、
 |--------|------|
 | `<AgentReadyProvider>` | 注入 runtime、session、policy、logger |
 | `useAgentSurface()` | 声明 Surface 元数据，绑定生命周期 |
-| `useAgentAction()` | 注册 Action + 自动注销 |
+| `useAgentAction(handle, …)` | 显式 handle 注册 Action + 自动注销 |
 | `useAgentObservation()` | 注册 Observation + 订阅应用状态 |
 | `useAgentCatalog()` | 宿主 UI 或 DevTools 读取目录 |
 | `<AgentBoundary>` | 错误隔离；Surface 崩溃不影响 Agent 通道 |
