@@ -97,7 +97,8 @@ export function createAgentRuntime(config: AgentRuntimeConfig = {}): AgentRuntim
     async invokeAction<T>(request: InvokeActionRequest) {
       return invokeAction(surfaces, actions, events, request, {
         actionTimeoutMs: config.actionTimeoutMs,
-        policy
+        policy,
+        rateLimit: config.rateLimit
       }) as Promise<AgentResult<T>>;
     },
 

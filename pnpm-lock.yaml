@@ -8,6 +8,12 @@ importers:
 
   .:
     devDependencies:
+      '@agent-ready/runtime':
+        specifier: workspace:*
+        version: link:packages/runtime
+      '@agent-ready/schema':
+        specifier: workspace:*
+        version: link:packages/schema
       '@arethetypeswrong/cli':
         specifier: ^0.17.4
         version: 0.17.4
@@ -20,6 +26,9 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
 
   apps/kitchen-sink:
     dependencies:

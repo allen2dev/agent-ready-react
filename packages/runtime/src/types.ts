@@ -12,12 +12,15 @@ import type { ZodType, ZodTypeDef } from "zod";
 
 import type { PolicyConfig, PolicyProvider } from "./policy/types.js";
 
+import type { RateLimitProvider } from "./ratelimit/index.js";
+
 export interface AgentRuntimeConfig {
   defaultPolicy?: PolicyConfig;
   scheduler?: (fn: () => void) => void;
   logger?: AgentLogger;
   maxCatalogEntries?: number;
   actionTimeoutMs?: number;
+  rateLimit?: RateLimitProvider;
 }
 
 export interface AgentLogger {

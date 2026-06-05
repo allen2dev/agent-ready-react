@@ -10,6 +10,8 @@ import type { ActionHandlerContext } from "../types.js";
 import type { TypedEventBus } from "../events.js";
 import type { PolicyProvider } from "../policy/types.js";
 
+import type { RateLimitProvider } from "../ratelimit/index.js";
+
 export async function invokeAction(
   surfaces: SurfaceRegistry,
   actions: ActionRegistry,
@@ -18,10 +20,29 @@ export async function invokeAction(
   options: {
     actionTimeoutMs?: number;
     policy?: PolicyProvider;
+    rateLimit?: RateLimitProvider;
   } = {}
 ): Promise<AgentResult<unknown>> {
   const start = performance.now();
   const { handle, action: actionName, input, context } = request;
+
+  if (options.rateLimit && context?.sessionId) {
+    const allowed = await options.rateLimit.check({
+      sessionId: context.sessionId,
+      handle,
+      action: actionName
+    });
+    if (!allowed) {
+      const error = agentError("AGENT_RATE_LIMITED", "Rate limit exceeded");
+      events.emit("action:invoked", {
+        handle,
+        action: actionName,
+        ok: false,
+        error
+      });
+      return { ok: false, error };
+    }
+  }
 
   if (!surfaces.has(handle)) {
     return {
