@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Ready React SDK — 用户指南</title>
+  <meta name="description" content="面向 React 应用的 AI Agent 可发现、可理解、可执行契约层" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <p class="badge">Schema-first · Opt-in · React Native</p>
+      <h1>Agent Ready React SDK</h1>
+      <p class="lead">
+        一套面向 React 应用的<strong>声明式元数据与运行时契约层</strong>，
+        让 AI Agent 能够<strong>发现</strong>你的 UI、<strong>理解</strong>语义、
+        <strong>执行</strong>用户意图等价操作，并<strong>订阅</strong>结构化状态——
+        无需依赖 DOM 抓取或脆弱的 RPA。
+      </p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://github.com/allen2dev/agent-ready-react">GitHub 仓库</a>
+        <a class="btn" href="https://github.com/allen2dev/agent-ready-react/blob/main/docs/sdk-api.md">API 文档</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <h2>这个项目是做什么的？</h2>
+      <p>
+        现代 AI Agent（IDE Agent、自主 Agent、MCP Client、Eval Bot）需要与 Web 应用交互，
+        但传统方式——解析 DOM 文本、模拟点击——既不稳定，也难以审计和治理。
+      </p>
+      <p>
+        <strong>Agent Ready React SDK</strong> 在 React 应用与外部 Agent 之间插入一层
+        <em>显式契约</em>：你在组件里声明 Surface（可操作区域）、Action（可执行操作）、
+        Observation（可读状态），SDK 负责注册、编目、校验、派发与策略控制。
+      </p>
+      <div class="diagram">
+        <pre>External Agent  →  Bridge / MCP  →  Runtime  →  React Hooks  →  你的业务 UI</pre>
+      </div>
+      <p class="note">SDK <strong>不包含</strong>业务逻辑与 LLM 运行时；它只提供 Agent 可见的「机器接口」。</p>
+    </section>
+
+    <section>
+      <h2>核心能力</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>可发现 Discoverable</h3>
+          <p>Agent 通过 Catalog 枚举页面/区域内的 Surface、Action 与 Observation，带分页与过滤。</p>
+        </article>
+        <article class="card">
+          <h3>可理解 Understandable</h3>
+          <p>一切对外契约以 Zod / JSON Schema 为单一事实来源，输入输出可机器校验。</p>
+        </article>
+        <article class="card">
+          <h3>可执行 Actionable</h3>
+          <p><code>useAgentAction(handle, action, handler)</code> 将 Agent 调用路由到你写的 React 处理器。</p>
+        </article>
+        <article class="card">
+          <h3>可观测 Observable</h3>
+          <p><code>useAgentObservation</code> 暴露结构化快照，Agent 订阅状态变化而非 DOM 文本。</p>
+        </article>
+        <article class="card">
+          <h3>可治理 Governable</h3>
+          <p>内置 Policy、OIDC、租户白名单、速率限制与审计日志，执行权始终在宿主应用。</p>
+        </article>
+        <article class="card">
+          <h3>RSC 友好</h3>
+          <p>Server Component 通过 <code>@agent-ready/react/rsc</code> 声明 manifest，客户端 hydration 注入 Catalog。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>为什么选择它？</h2>
+      <ul class="advantages">
+        <li><strong>Schema-first</strong> — 契约即文档，Agent 与人都读同一份类型定义。</li>
+        <li><strong>Opt-in by default</strong> — 未注册的 UI 对 Agent 不可见，避免意外泄露。</li>
+        <li><strong>渐进式接入</strong> — 按路由/Feature 切片接入，无需重写整个应用。</li>
+        <li><strong>Host owns authority</strong> — 校验、策略、审计在应用内完成，不依赖外部黑盒。</li>
+        <li><strong>Deterministic</strong> — 稳定 <code>AgentHandle</code> 寻址，版本化契约，拒绝启发式 DOM 推断。</li>
+        <li><strong>生态就绪</strong> — MCP 传输、OpenTelemetry、CLI codegen、Playground 与 Kitchen Sink 示例齐全。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>包结构</h2>
+      <table>
+        <thead>
+          <tr><th>包</th><th>用途</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>@agent-ready/schema</code></td><td>类型、Zod 工具、JSON Schema 转换</td></tr>
+          <tr><td><code>@agent-ready/runtime</code></td><td>注册表、Catalog、Action 路由、Policy</td></tr>
+          <tr><td><code>@agent-ready/react</code></td><td>Provider、Hooks、RSC manifest API</td></tr>
+          <tr><td><code>@agent-ready/mcp</code></td><td>MCP Server 传输（stdio / SSE）</td></tr>
+          <tr><td><code>@agent-ready/bridge</code></td><td>HTTP / JSON-RPC 网关（可选）</td></tr>
+          <tr><td><code>@agent-ready/observability</code></td><td>事件与 OpenTelemetry 集成</td></tr>
+          <tr><td><code>@agent-ready/cli</code></td><td>Manifest 校验、文档 codegen</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>快速开始</h2>
+      <pre class="code"><code>pnpm install
+pnpm build
+
+# 本地 Playground
+pnpm --filter playground dev
+
+# Next.js 示例（RSC + Client Actions）
+pnpm --filter kitchen-sink dev</code></pre>
+      <p>最小 React 集成示例：</p>
+      <pre class="code"><code>import { AgentReadyProvider, useAgentSurface, useAgentAction } from "@agent-ready/react";
+import { defineAction } from "@agent-ready/schema";
+import { z } from "zod";
+
+const handle = "app://forms/contact/main" as const;
+
+function ContactForm() {
+  useAgentSurface({ handle, title: "Contact Form", capabilities: ["act"] });
+
+  useAgentAction(
+    handle,
+    defineAction({
+      name: "submitForm",
+      description: "Submit the contact form",
+      input: z.object({ email: z.string().email() })
+    }),
+    async (input) =&gt; ({ submitted: true, email: input.email })
+  );
+
+  return &lt;form&gt;{/* your UI */}&lt;/form&gt;;
+}
+
+export function App() {
+  return (
+    &lt;AgentReadyProvider session={{ sessionId: "web-1", roles: ["agent"] }}&gt;
+      &lt;ContactForm /&gt;
+    &lt;/AgentReadyProvider&gt;
+  );
+}</code></pre>
+    </section>
+
+    <section>
+      <h2>示例与文档</h2>
+      <div class="links">
+        <a href="https://github.com/allen2dev/agent-ready-react/tree/main/apps/kitchen-sink">Kitchen Sink（Next.js App Router）</a>
+        <a href="https://github.com/allen2dev/agent-ready-react/tree/main/apps/playground">Playground（Vite 交互演示）</a>
+        <a href="https://github.com/allen2dev/agent-ready-react/blob/main/docs/architecture.md">架构设计</a>
+        <a href="https://github.com/allen2dev/agent-ready-react/blob/main/docs/sdk-api.md">SDK API 契约</a>
+        <a href="https://github.com/allen2dev/agent-ready-react/blob/main/docs/security/default-policy.md">安全与默认策略</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Agent Ready React SDK · MIT · 由 GitHub Pages 托管</p>
+    </div>
+  </footer>
+</body>
+</html>
