@@ -1,0 +1,66 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`toJsonSchema > converts email action input 1`] = `
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "email": {
+      "format": "email",
+      "type": "string",
+    },
+  },
+  "required": [
+    "email",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`toJsonSchema > converts enum field 1`] = `
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "stage": {
+      "enum": [
+        "new",
+        "done",
+      ],
+      "type": "string",
+    },
+  },
+  "required": [
+    "stage",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`toJsonSchema > converts nested object 1`] = `
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "user": {
+      "additionalProperties": false,
+      "properties": {
+        "age": {
+          "type": "number",
+        },
+        "name": {
+          "type": "string",
+        },
+      },
+      "required": [
+        "name",
+      ],
+      "type": "object",
+    },
+  },
+  "required": [
+    "user",
+  ],
+  "type": "object",
+}
+`;

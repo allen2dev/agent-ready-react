@@ -1,0 +1,20 @@
+{
+  "name": "@agent-ready/vitest-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node -e \"process.exit(0)\"",
+    "test": "node --test test/smoke.test.mjs",
+    "lint": "node -e \"process.exit(0)\"",
+    "typecheck": "node -e \"process.exit(0)\""
+  },
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "devDependencies": {
+    "@agent-ready/tsconfig": "workspace:*",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
