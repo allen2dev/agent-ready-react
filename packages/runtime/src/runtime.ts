@@ -31,6 +31,11 @@ export interface AgentRuntime {
   toPromptContext(options?: PromptContextOptions): string;
   invokeAction<T = unknown>(request: InvokeActionRequest): Promise<AgentResult<T>>;
   readObservation(request: ReadObservationRequest): AgentResult<unknown>;
+  subscribeObservation(
+    request: ReadObservationRequest,
+    onUpdate: (result: AgentResult<unknown>) => void,
+    options?: { intervalMs?: number }
+  ): () => void;
   on<E extends keyof AgentRuntimeEventMap>(
     event: E,
     listener: (payload: AgentRuntimeEventMap[E]) => void
@@ -98,6 +103,22 @@ export function createAgentRuntime(config: AgentRuntimeConfig = {}): AgentRuntim
 
     readObservation(request) {
       return readObservation(surfaces, observations, request);
+    },
+
+    subscribeObservation(request, onUpdate, options) {
+      const intervalMs = options?.intervalMs ?? 500;
+      let lastEtag: string | undefined;
+      const tick = () => {
+        const result = readObservation(surfaces, observations, request);
+        const etag = result.ok ? result.meta?.etag : undefined;
+        if (etag !== lastEtag) {
+          lastEtag = etag;
+          onUpdate(result);
+        }
+      };
+      tick();
+      const id = setInterval(tick, intervalMs);
+      return () => clearInterval(id);
     },
 
     on(event, listener) {

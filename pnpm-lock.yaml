@@ -21,6 +21,31 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  apps/mcp-server-demo:
+    dependencies:
+      '@agent-ready/mcp':
+        specifier: workspace:*
+        version: link:../../packages/mcp
+      '@agent-ready/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
+      '@agent-ready/schema':
+        specifier: workspace:*
+        version: link:../../packages/schema
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+    devDependencies:
+      '@agent-ready/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   apps/playground:
     dependencies:
       '@agent-ready/react':
@@ -94,6 +119,12 @@ importers:
 
   packages/cli:
     dependencies:
+      '@agent-ready/mcp':
+        specifier: workspace:*
+        version: link:../mcp
+      '@agent-ready/runtime':
+        specifier: workspace:*
+        version: link:../runtime
       '@agent-ready/schema':
         specifier: workspace:*
         version: link:../schema
@@ -172,6 +203,37 @@ importers:
       vitest:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.19.19)(jsdom@25.0.1)
+
+  packages/mcp:
+    dependencies:
+      '@agent-ready/runtime':
+        specifier: workspace:*
+        version: link:../runtime
+      '@agent-ready/schema':
+        specifier: workspace:*
+        version: link:../schema
+    devDependencies:
+      '@agent-ready/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      '@agent-ready/vitest-config':
+        specifier: workspace:*
+        version: link:../../tooling/vitest-config
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.19.19
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.19.19)(jsdom@25.0.1)
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
 
   packages/observability:
     dependencies:

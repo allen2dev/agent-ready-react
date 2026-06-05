@@ -1,27 +1,34 @@
 {
-  "name": "@agent-ready/cli",
+  "name": "@agent-ready/mcp",
   "version": "0.0.0",
   "type": "module",
-  "bin": {
-    "agent-ready": "./dist/index.js"
-  },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --clean",
     "test": "vitest run",
     "lint": "node -e \"process.exit(0)\"",
     "typecheck": "tsc --noEmit"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./stdio": {
+      "types": "./dist/stdio.d.ts",
+      "import": "./dist/stdio.js"
+    }
+  },
   "dependencies": {
-    "@agent-ready/mcp": "workspace:*",
     "@agent-ready/runtime": "workspace:*",
-    "@agent-ready/schema": "workspace:*",
-    "commander": "^12.1.0"
+    "@agent-ready/schema": "workspace:*"
   },
   "devDependencies": {
     "@agent-ready/tsconfig": "workspace:*",
     "@agent-ready/vitest-config": "workspace:*",
+    "@types/node": "^22.10.2",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "vitest": "^2.1.8",
+    "zod": "^3.24.1"
   }
 }

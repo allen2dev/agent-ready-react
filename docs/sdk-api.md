@@ -1,7 +1,7 @@
 # Agent Ready React SDK — 公共 API 契约
 
-> **版本**: 0.1.0-draft  
-> **稳定性**: Phase 0 设计稿；实现前可能调整，破坏性变更通过 ADR 记录
+> **版本**: 0.2.0-beta  
+> **稳定性**: Phase 2 实现中；React Hooks 以显式 `handle` 为准（ADR-007）
 
 本文档定义 **Agent 集成方** 与 **应用开发者** 共同依赖的稳定 API 面。实现细节以 TypeScript 类型为准。
 
