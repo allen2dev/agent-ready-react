@@ -52,15 +52,25 @@ export function createAgentRuntime(config: AgentRuntimeConfig = {}): AgentRuntim
     ? createPolicyEngine(config.defaultPolicy)
     : createPolicyEngine({ mode: "defaultDeny" });
 
+  const emitCatalogUpdated = () => {
+    events.emit("catalog:updated", { totalSurfaces: surfaces.list().length });
+  };
+
   return {
     registerSurface(entry) {
       const unregister = surfaces.register(entry);
-      events.emit("surface:registered", { handle: entry.manifest.handle });
+      events.emit("surface:registered", {
+        handle: entry.manifest.handle,
+        manifest: entry.manifest
+      });
+      emitCatalogUpdated();
       return () => {
+        const manifest = entry.manifest;
         unregister();
         actions.removeAllForHandle(entry.manifest.handle);
         observations.removeAllForHandle(entry.manifest.handle);
-        events.emit("surface:unregistered", { handle: entry.manifest.handle });
+        events.emit("surface:unregistered", { handle: manifest.handle, manifest });
+        emitCatalogUpdated();
       };
     },
 
@@ -68,19 +78,27 @@ export function createAgentRuntime(config: AgentRuntimeConfig = {}): AgentRuntim
       if (!surfaces.has(handle)) {
         throw new Error(`Cannot register action for unknown surface: ${handle}`);
       }
+      const actionName = action.definition.name;
       const unregister = actions.register(handle, action);
-      events.emit("action:registered", {
-        handle,
-        action: action.definition.name
-      });
-      return unregister;
+      events.emit("action:registered", { handle, actionName });
+      emitCatalogUpdated();
+      return () => {
+        unregister();
+        events.emit("action:unregistered", { handle, actionName });
+        emitCatalogUpdated();
+      };
     },
 
     registerObservation(handle, obs) {
       if (!surfaces.has(handle)) {
         throw new Error(`Cannot register observation for unknown surface: ${handle}`);
       }
-      return observations.register(handle, obs);
+      const unregister = observations.register(handle, obs);
+      emitCatalogUpdated();
+      return () => {
+        unregister();
+        emitCatalogUpdated();
+      };
     },
 
     getCatalog(query) {
@@ -103,14 +121,14 @@ export function createAgentRuntime(config: AgentRuntimeConfig = {}): AgentRuntim
     },
 
     readObservation(request) {
-      return readObservation(surfaces, observations, request);
+      return readObservation(surfaces, observations, request, events);
     },
 
     subscribeObservation(request, onUpdate, options) {
       const intervalMs = options?.intervalMs ?? 500;
       let lastEtag: string | undefined;
       const tick = () => {
-        const result = readObservation(surfaces, observations, request);
+        const result = readObservation(surfaces, observations, request, events);
         const etag = result.ok ? result.meta?.etag : undefined;
         if (etag !== lastEtag) {
           lastEtag = etag;

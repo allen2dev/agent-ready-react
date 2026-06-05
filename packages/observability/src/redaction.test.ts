@@ -9,12 +9,25 @@ describe("createRedactionMiddleware", () => {
       timestamp: 0,
       payload: {
         handle: "app://demo/page/main",
-        action: "submit",
-        ok: false,
-        error: { code: "AGENT_VALIDATION_FAILED", message: "x", details: { email: "a@b.c" } }
+        actionName: "submit",
+        input: { email: "a@b.c" },
+        result: {
+          ok: false,
+          error: {
+            code: "AGENT_VALIDATION_FAILED",
+            message: "x",
+            details: { email: "a@b.c" }
+          }
+        },
+        durationMs: 1,
+        sessionId: "s1"
       }
     });
-    const error = (result.payload as { error?: { details?: { email?: string } } }).error;
-    expect(error?.details?.email).toBe("[REDACTED]");
+    const payload = result.payload as {
+      input?: { email?: string };
+      result?: { error?: { details?: { email?: string } } };
+    };
+    expect(payload.input?.email).toBe("[REDACTED]");
+    expect(payload.result?.error?.details?.email).toBe("[REDACTED]");
   });
 });

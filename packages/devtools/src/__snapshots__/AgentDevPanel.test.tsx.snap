@@ -1,0 +1,120 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AgentDevPanel > matches snapshot when open 1`] = `
+<body>
+  <div />
+  <div
+    style="position: fixed; bottom: 16px; right: 16px; z-index: 2147483646; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 12px; color: rgb(230, 237, 243); background: rgb(26, 29, 39); border: 1px solid rgb(45, 51, 72); border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.45); overflow: hidden; display: flex; flex-direction: column; width: 420px; max-height: 80vh;"
+  >
+    <header
+      style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgb(15, 17, 23); border-bottom: 1px solid rgb(45, 51, 72); cursor: grab; user-select: none;"
+    >
+      <strong
+        style="font-size: 13px;"
+      >
+        Agent DevTools
+      </strong>
+      <button
+        aria-label="Close Agent DevTools"
+        style="all: unset; cursor: pointer; color: rgb(139, 148, 158); padding: 2px 6px;"
+        type="button"
+      >
+        ✕
+      </button>
+    </header>
+    <div
+      style="overflow: auto; flex: 1 1 0%;"
+    >
+      <section
+        style="border-top: 1px solid rgb(45, 51, 72);"
+      >
+        <div
+          style="padding: 8px 12px; background: rgb(15, 17, 23); border-bottom: 1px solid rgb(45, 51, 72);"
+        >
+          <h3
+            style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: rgb(139, 148, 158); margin: 0px 0px 8px 0px;"
+          >
+            Surfaces
+          </h3>
+        </div>
+        <div
+          style="overflow: auto; max-height: 180px; padding: 8px 12px;"
+        >
+          <div>
+            <div
+              style="margin-bottom: 8px;"
+            >
+              <button
+                style="all: unset; cursor: pointer; display: block; width: 100%; padding: 4px 6px; border-radius: 4px; background: transparent; color: rgb(88, 166, 255);"
+                type="button"
+              >
+                app://demo/page/main
+              </button>
+              <div
+                style="padding-left: 12px; color: rgb(139, 148, 158); font-size: 11px;"
+              >
+                <div>
+                  capabilities: 
+                  act
+                </div>
+                <div>
+                  actions: 
+                  ping
+                </div>
+                <div>
+                  observations: 
+                  (none)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        style="border-top: 1px solid rgb(45, 51, 72);"
+      >
+        <div
+          style="padding: 8px 12px; background: rgb(15, 17, 23); border-bottom: 1px solid rgb(45, 51, 72);"
+        >
+          <h3
+            style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: rgb(139, 148, 158); margin: 0px 0px 8px 0px;"
+          >
+            Action log
+          </h3>
+        </div>
+        <div
+          style="overflow: auto; max-height: 180px; padding: 8px 12px;"
+        >
+          <div
+            style="color: rgb(139, 148, 158); padding: 8px;"
+          >
+            No invocations yet
+          </div>
+        </div>
+      </section>
+      <section
+        style="border-top: 1px solid rgb(45, 51, 72);"
+      >
+        <div
+          style="padding: 8px 12px; background: rgb(15, 17, 23); border-bottom: 1px solid rgb(45, 51, 72);"
+        >
+          <h3
+            style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: rgb(139, 148, 158); margin: 0px 0px 8px 0px;"
+          >
+            Observations
+          </h3>
+        </div>
+        <div
+          style="overflow: auto; max-height: 180px; padding: 8px 12px;"
+        >
+          <div
+            style="color: rgb(139, 148, 158); padding: 8px;"
+          >
+            No observations
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+`;

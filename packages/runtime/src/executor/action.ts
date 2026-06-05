@@ -12,6 +12,29 @@ import type { PolicyProvider } from "../policy/types.js";
 
 import type { RateLimitProvider } from "../ratelimit/index.js";
 
+function emitActionInvoked(
+  events: TypedEventBus,
+  payload: {
+    handle: InvokeActionRequest["handle"];
+    actionName: string;
+    input: unknown;
+    result: AgentResult<unknown>;
+    durationMs: number;
+    sessionId?: string;
+  }
+): void {
+  events.emit("action:invoked", {
+    handle: payload.handle,
+    actionName: payload.actionName,
+    input: payload.input,
+    result: payload.result.ok
+      ? { ok: true, data: payload.result.data }
+      : { ok: false, error: payload.result.error },
+    durationMs: payload.durationMs,
+    sessionId: payload.sessionId
+  });
+}
+
 export async function invokeAction(
   surfaces: SurfaceRegistry,
   actions: ActionRegistry,
@@ -25,22 +48,31 @@ export async function invokeAction(
 ): Promise<AgentResult<unknown>> {
   const start = performance.now();
   const { handle, action: actionName, input, context } = request;
+  const sessionId = context?.sessionId;
 
-  if (options.rateLimit && context?.sessionId) {
+  const finish = (result: AgentResult<unknown>): AgentResult<unknown> => {
+    emitActionInvoked(events, {
+      handle,
+      actionName,
+      input,
+      result,
+      durationMs: performance.now() - start,
+      sessionId
+    });
+    return result;
+  };
+
+  if (options.rateLimit && sessionId) {
     const allowed = await options.rateLimit.check({
-      sessionId: context.sessionId,
+      sessionId,
       handle,
       action: actionName
     });
     if (!allowed) {
-      const error = agentError("AGENT_RATE_LIMITED", "Rate limit exceeded");
-      events.emit("action:invoked", {
-        handle,
-        action: actionName,
+      return finish({
         ok: false,
-        error
+        error: agentError("AGENT_RATE_LIMITED", "Rate limit exceeded")
       });
-      return { ok: false, error };
     }
   }
 
@@ -73,26 +105,19 @@ export async function invokeAction(
     });
     if (!allowed) {
       const error = agentError("AGENT_POLICY_DENIED", "Policy denied action");
-      events.emit("policy:denied", { handle, action: actionName });
-      events.emit("action:invoked", {
+      events.emit("policy:denied", {
         handle,
-        action: actionName,
-        ok: false,
-        error
+        actionName,
+        reason: error.message,
+        sessionId
       });
-      return { ok: false, error };
+      return finish({ ok: false, error });
     }
   }
 
   const validation = validateAgentInput(registered.definition.input, input);
   if (!validation.success) {
-    events.emit("action:invoked", {
-      handle,
-      action: actionName,
-      ok: false,
-      error: validation.error
-    });
-    return { ok: false, error: validation.error };
+    return finish({ ok: false, error: validation.error });
   }
 
   const handlerContext: ActionHandlerContext = {
@@ -103,24 +128,18 @@ export async function invokeAction(
 
   try {
     const data = await registered.handler(validation.data, handlerContext);
-    const result: AgentResult<unknown> = {
+    return finish({
       ok: true,
       data,
       meta: { durationMs: performance.now() - start }
-    };
-    events.emit("action:invoked", { handle, action: actionName, ok: true });
-    return result;
-  } catch (err) {
-    const error = agentError(
-      "AGENT_HANDLER_ERROR",
-      err instanceof Error ? err.message : "Handler failed"
-    );
-    events.emit("action:invoked", {
-      handle,
-      action: actionName,
-      ok: false,
-      error
     });
-    return { ok: false, error };
+  } catch (err) {
+    return finish({
+      ok: false,
+      error: agentError(
+        "AGENT_HANDLER_ERROR",
+        err instanceof Error ? err.message : "Handler failed"
+      )
+    });
   }
 }

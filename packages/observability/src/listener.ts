@@ -5,8 +5,11 @@ const ALL_EVENTS: AgentRuntimeEvent[] = [
   "surface:registered",
   "surface:unregistered",
   "action:registered",
+  "action:unregistered",
   "action:invoked",
-  "policy:denied"
+  "observation:read",
+  "policy:denied",
+  "catalog:updated"
 ];
 
 export function attachRuntimeListener(

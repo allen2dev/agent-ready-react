@@ -41,7 +41,9 @@ export function useAgentCatalog(query?: CatalogQuery) {
       const offs = [
         runtime.on("surface:registered", refresh),
         runtime.on("surface:unregistered", refresh),
-        runtime.on("action:registered", refresh)
+        runtime.on("action:registered", refresh),
+        runtime.on("action:unregistered", refresh),
+        runtime.on("catalog:updated", refresh)
       ];
       return () => offs.forEach((off) => off());
     },

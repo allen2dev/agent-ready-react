@@ -1,5 +1,5 @@
 {
-  "extends": "@agent-ready/tsconfig/base.json",
+  "extends": "@agent-ready/tsconfig/react.json",
   "include": ["src"],
-  "exclude": ["src/**/*.test.ts"]
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
 }

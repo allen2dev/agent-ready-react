@@ -1,6 +1,5 @@
 import type { AgentRuntime } from "@agent-ready/runtime";
-import { attachRuntimeListener, createMemorySink } from "@agent-ready/observability";
-import { createDevToolsStore, type DevToolsState } from "./store.js";
+import { getOrCreateStore } from "./useDevtoolsState.js";
 
 export interface AgentReadyDevtoolsGlobal {
   getState: () => import("./store.js").DevToolsState;
@@ -13,30 +12,13 @@ declare global {
   }
 }
 
+/** @deprecated Use AgentDevPanel or createDevToolsStore directly */
 export function connectDevtools(runtime: AgentRuntime): () => void {
-  const store = createDevToolsStore(100);
-  const sink = createMemorySink(100);
-
-  const refreshCatalog = () => store.setCatalog(runtime.getCatalog());
-  refreshCatalog();
-
-  const detachSink = attachRuntimeListener(runtime, (event) => {
-    sink(event);
-    store.pushEvent(event);
-    if (event.type === "surface:registered" || event.type === "surface:unregistered") {
-      refreshCatalog();
-    }
-  });
-
-  const detachEvents = [
-    runtime.on("action:registered", refreshCatalog),
-    runtime.on("surface:registered", refreshCatalog),
-    runtime.on("surface:unregistered", refreshCatalog)
-  ];
+  const store = getOrCreateStore(runtime);
 
   const api: AgentReadyDevtoolsGlobal = {
     getState: () => store.getState(),
-    refreshCatalog
+    refreshCatalog: () => store.refreshCatalog()
   };
 
   if (typeof globalThis !== "undefined" && "window" in globalThis) {
@@ -45,10 +27,14 @@ export function connectDevtools(runtime: AgentRuntime): () => void {
   }
 
   return () => {
-    detachSink();
-    detachEvents.forEach((off) => off());
+    store.destroy();
   };
 }
 
-export { createDevToolsStore };
-export type { DevToolsState };
+export { AgentDevPanel } from "./AgentDevPanel.js";
+export type { AgentDevPanelProps, DevPanelPosition } from "./AgentDevPanel.js";
+export { AgentInspector } from "./AgentInspector.js";
+export type { AgentInspectorProps } from "./AgentInspector.js";
+export { createDevToolsStore } from "./store.js";
+export { connectDevtoolsStore, useDevToolsState } from "./useDevtoolsState.js";
+export type { DevToolsState, ActionLogEntry, ObservationSnapshot } from "./store.js";

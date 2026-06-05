@@ -2,6 +2,7 @@ import { validateAgentInput, agentError, type AgentResult } from "@agent-ready/s
 import type { ReadObservationRequest } from "@agent-ready/schema";
 import type { ObservationRegistry } from "../registry/observation.js";
 import type { SurfaceRegistry } from "../registry/surface.js";
+import type { TypedEventBus } from "../events.js";
 
 export function computeEtag(value: unknown): string {
   const json = JSON.stringify(value);
@@ -13,12 +14,34 @@ export function computeEtag(value: unknown): string {
   return Math.abs(hash).toString(16);
 }
 
+function estimateByteSize(value: unknown): number {
+  try {
+    return new TextEncoder().encode(JSON.stringify(value)).byteLength;
+  } catch {
+    return 0;
+  }
+}
+
 export function readObservation(
   surfaces: SurfaceRegistry,
   observations: ObservationRegistry,
-  request: ReadObservationRequest
+  request: ReadObservationRequest,
+  events?: TypedEventBus
 ): AgentResult<unknown> {
+  const start = performance.now();
   const { handle, name } = request;
+
+  const finish = (result: AgentResult<unknown>): AgentResult<unknown> => {
+    if (events && result.ok) {
+      events.emit("observation:read", {
+        handle,
+        observationName: name,
+        byteSize: estimateByteSize(result.data),
+        durationMs: performance.now() - start
+      });
+    }
+    return result;
+  };
 
   if (!surfaces.has(handle)) {
     return {
@@ -42,18 +65,19 @@ export function readObservation(
   }
 
   const etag = computeEtag(validation.data);
-  return {
+  return finish({
     ok: true,
     data: validation.data,
-    meta: { durationMs: 0, etag }
-  };
+    meta: { durationMs: performance.now() - start, etag }
+  });
 }
 
 export function readSnapshot(
   surfaces: SurfaceRegistry,
   observations: ObservationRegistry,
   handle: import("@agent-ready/schema").AgentHandle,
-  names?: string[]
+  names?: string[],
+  events?: TypedEventBus
 ): AgentResult<Record<string, unknown>> {
   if (!surfaces.has(handle)) {
     return {
@@ -66,7 +90,7 @@ export function readSnapshot(
   const snapshot: Record<string, unknown> = {};
 
   for (const name of targetNames) {
-    const result = readObservation(surfaces, observations, { handle, name });
+    const result = readObservation(surfaces, observations, { handle, name }, events);
     if (!result.ok) return result;
     snapshot[name] = result.data;
   }

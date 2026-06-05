@@ -26,11 +26,12 @@ export function attachAuditSink(
 ): () => void {
   const offInvoked = runtime.on("action:invoked", (payload) => {
     void sink.emit({
-      type: payload.ok ? "action.invoked" : "action.failed",
+      type: payload.result.ok ? "action.invoked" : "action.failed",
       handle: payload.handle,
-      action: payload.action,
-      ok: payload.ok,
-      error: payload.error,
+      action: payload.actionName,
+      sessionId: payload.sessionId,
+      ok: payload.result.ok,
+      error: payload.result.ok ? undefined : payload.result.error,
       timestamp: Date.now()
     });
   });
@@ -39,7 +40,8 @@ export function attachAuditSink(
     void sink.emit({
       type: "action.denied",
       handle: payload.handle,
-      action: payload.action,
+      action: payload.actionName,
+      sessionId: payload.sessionId,
       timestamp: Date.now()
     });
   });
