@@ -1,0 +1,30 @@
+{
+  "name": "@agent-ready/bridge",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "test": "vitest run",
+    "lint": "node -e \"process.exit(0)\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@agent-ready/runtime": "workspace:*",
+    "@agent-ready/schema": "workspace:*"
+  },
+  "devDependencies": {
+    "@agent-ready/tsconfig": "workspace:*",
+    "@agent-ready/vitest-config": "workspace:*",
+    "@types/node": "^22.10.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "zod": "^3.24.1"
+  }
+}

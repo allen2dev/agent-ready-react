@@ -21,13 +21,7 @@ export function createMockAgent(
       return runtime.getCatalog(query);
     },
     read(_request: ReadObservationRequest): Promise<AgentResult<unknown>> {
-      return Promise.resolve({
-        ok: false,
-        error: {
-          code: "AGENT_ACTION_NOT_FOUND",
-          message: "Observation not implemented in Phase 0"
-        }
-      });
+      return Promise.resolve(runtime.readObservation(_request));
     }
   };
 }

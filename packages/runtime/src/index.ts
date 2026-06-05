@@ -7,6 +7,7 @@ export type {
   CatalogQuery,
   CatalogSurfaceSummary,
   RegisteredAction,
+  RegisteredObservation,
   RegisteredSurface,
   ActionHandlerContext,
   AgentLogger,

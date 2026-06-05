@@ -4,6 +4,7 @@ import type {
   AgentResult,
   AgentSessionContext,
   InvokeActionRequest,
+  ObservationDefinition,
   SurfaceManifest
 } from "@agent-ready/schema";
 export type { AgentSessionContext, InvokeActionRequest };
@@ -34,6 +35,11 @@ export interface RegisteredAction<TIn = unknown, TOut = unknown> {
     input: TIn,
     ctx: ActionHandlerContext
   ) => Promise<TOut> | TOut;
+}
+
+export interface RegisteredObservation<T = unknown> {
+  definition: ObservationDefinition<T>;
+  selector: () => T;
 }
 
 export interface ActionHandlerContext {

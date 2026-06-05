@@ -6,10 +6,12 @@ import type {
 } from "../types.js";
 import type { SurfaceRegistry } from "../registry/surface.js";
 import type { ActionRegistry } from "../registry/action.js";
+import type { ObservationRegistry } from "../registry/observation.js";
 
 export function buildCatalog(
   surfaces: SurfaceRegistry,
   actions: ActionRegistry,
+  observations: ObservationRegistry,
   query: CatalogQuery = {}
 ): AgentCatalog {
   const limit = query.limit ?? 50;
@@ -44,7 +46,7 @@ export function buildCatalog(
     title: manifest.title,
     capabilities: manifest.capabilities,
     actions: actions.listForHandle(manifest.handle as AgentHandle),
-    observations: []
+    observations: observations.listForHandle(manifest.handle as AgentHandle),
   }));
 
   return {
