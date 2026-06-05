@@ -1,0 +1,5 @@
+{
+  "extends": "@agent-ready/tsconfig/react.json",
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
+}

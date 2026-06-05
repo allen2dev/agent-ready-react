@@ -131,6 +131,9 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
     devDependencies:
+      '@agent-ready/dev-server':
+        specifier: workspace:*
+        version: link:../../packages/dev-server
       '@agent-ready/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
@@ -321,6 +324,9 @@ importers:
 
   packages/cli:
     dependencies:
+      '@agent-ready/dev-server':
+        specifier: workspace:*
+        version: link:../dev-server
       '@agent-ready/mcp':
         specifier: workspace:*
         version: link:../mcp
@@ -349,6 +355,49 @@ importers:
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.19.19)(jsdom@25.0.1)
+
+  packages/dev-server:
+    dependencies:
+      '@agent-ready/bridge':
+        specifier: workspace:*
+        version: link:../bridge
+      '@agent-ready/mcp':
+        specifier: workspace:*
+        version: link:../mcp
+      '@agent-ready/runtime':
+        specifier: workspace:*
+        version: link:../runtime
+      '@agent-ready/schema':
+        specifier: workspace:*
+        version: link:../schema
+      ws:
+        specifier: ^8.18.0
+        version: 8.21.0
+    devDependencies:
+      '@agent-ready/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      '@agent-ready/vitest-config':
+        specifier: workspace:*
+        version: link:../../tooling/vitest-config
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.19.19
+      '@types/ws':
+        specifier: ^8.5.13
+        version: 8.18.1
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vite:
+        specifier: ^6.0.5
+        version: 6.4.3(@types/node@22.19.19)(jiti@2.7.0)
       vitest:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.19.19)(jsdom@25.0.1)
@@ -439,6 +488,40 @@ importers:
       zod:
         specifier: ^3.24.1
         version: 3.25.76
+
+  packages/next:
+    dependencies:
+      '@agent-ready/bridge':
+        specifier: workspace:*
+        version: link:../bridge
+      '@agent-ready/runtime':
+        specifier: workspace:*
+        version: link:../runtime
+      '@agent-ready/schema':
+        specifier: workspace:*
+        version: link:../schema
+    devDependencies:
+      '@agent-ready/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      '@agent-ready/vitest-config':
+        specifier: workspace:*
+        version: link:../../tooling/vitest-config
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.19.19
+      next:
+        specifier: ^15.1.3
+        version: 15.5.19(@opentelemetry/api@1.9.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.19.19)(jsdom@25.0.1)
 
   packages/observability:
     dependencies:
@@ -1937,6 +2020,9 @@ packages:
 
   '@types/react@18.3.30':
     resolution: {integrity: sha512-3ek6mwJL5/VBewBcY4S66cqlCtK3qi4WIq37Z0m/NHw1hjhI7274Mx1qz/+ggSzyBCOEf7eHjBN6INjPAWYfYw==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@typescript-eslint/parser@8.60.1':
     resolution: {integrity: sha512-A0M6ua6H252bVjPvvtSgl2QA4+ET9S5Mtkb2GDyTxIhH/C4qDItT7RQNO5PhMC6NXGYXOR9dIalcDDgBKT7oFA==}
@@ -4906,6 +4992,10 @@ snapshots:
     dependencies:
       '@types/prop-types': 15.7.15
       csstype: 3.2.3
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 22.19.19
 
   '@typescript-eslint/parser@8.60.1(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)':
     dependencies:

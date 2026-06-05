@@ -1,6 +1,6 @@
 import type { AgentRuntime } from "@agent-ready/runtime";
-import type { InvokeActionRequest } from "@agent-ready/schema";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { handleBridgeMethod } from "./handler.js";
 
 interface JsonRpcRequest {
   jsonrpc: "2.0";
@@ -40,19 +40,10 @@ export function createBridgeServer(runtime: AgentRuntime, port = 0) {
 }
 
 async function handleMethod(runtime: AgentRuntime, req: JsonRpcRequest) {
-  switch (req.method) {
-    case "agent.catalog.list":
-      return runtime.getCatalog(req.params as { limit?: number });
-    case "agent.action.invoke":
-      return runtime.invokeAction(req.params as unknown as InvokeActionRequest);
-    case "agent.observation.read":
-      return runtime.readObservation(
-        req.params as { handle: string; name: string }
-      );
-    default:
-      return { ok: false, error: { code: "AGENT_ACTION_NOT_FOUND", message: req.method } };
-  }
+  return handleBridgeMethod(runtime, req.method, req.params);
 }
+
+export { handleBridgeMethod } from "./handler.js";
 
 function readBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {

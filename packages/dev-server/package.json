@@ -1,0 +1,51 @@
+{
+  "name": "@agent-ready/dev-server",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src/index.ts src/vite.ts src/client/index.ts --format esm --dts --clean",
+    "test": "vitest run",
+    "lint": "node -e \"process.exit(0)\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "import": "./dist/client/index.js"
+    }
+  },
+  "dependencies": {
+    "@agent-ready/bridge": "workspace:*",
+    "@agent-ready/mcp": "workspace:*",
+    "@agent-ready/runtime": "workspace:*",
+    "@agent-ready/schema": "workspace:*",
+    "ws": "^8.18.0"
+  },
+  "peerDependencies": {
+    "vite": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@agent-ready/tsconfig": "workspace:*",
+    "@agent-ready/vitest-config": "workspace:*",
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  }
+}

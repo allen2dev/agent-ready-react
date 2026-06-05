@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@agent-ready/dev-server": "workspace:*",
     "@agent-ready/mcp": "workspace:*",
     "@agent-ready/runtime": "workspace:*",
     "@agent-ready/schema": "workspace:*",
