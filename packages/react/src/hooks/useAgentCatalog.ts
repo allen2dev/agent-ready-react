@@ -2,6 +2,23 @@ import { useRef, useSyncExternalStore } from "react";
 import type { AgentCatalog, CatalogQuery } from "@agent-ready/runtime";
 import { useAgentReadyContext } from "../context.js";
 
+/**
+ * Subscribes to the agent catalog and re-renders when surfaces or actions change.
+ *
+ * @example
+ * ```tsx
+ * function AgentCatalogPanel() {
+ *   const catalog = useAgentCatalog({ capabilities: ["act"] });
+ *   return (
+ *     <ul>
+ *       {catalog.surfaces.map((surface) => (
+ *         <li key={surface.handle}>{surface.title}</li>
+ *       ))}
+ *     </ul>
+ *   );
+ * }
+ * ```
+ */
 export function useAgentCatalog(query?: CatalogQuery) {
   const { runtime } = useAgentReadyContext();
   const queryKey = JSON.stringify(query ?? {});

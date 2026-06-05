@@ -1,0 +1,35 @@
+{
+  "name": "babel-plugin-agent-ready",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean --external @babel/core --external @babel/types",
+    "test": "vitest run",
+    "lint": "node -e \"process.exit(0)\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/types": "^7.26.0"
+  },
+  "devDependencies": {
+    "@agent-ready/tsconfig": "workspace:*",
+    "@agent-ready/vitest-config": "workspace:*",
+    "@babel/core": "^7.26.0",
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^22.10.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.0.0"
+  }
+}

@@ -2,6 +2,34 @@ import { useEffect, useRef } from "react";
 import type { AgentHandle, ObservationDefinition } from "@agent-ready/schema";
 import { useAgentReadyContext } from "../context.js";
 
+/**
+ * Registers an observation selector on a surface for the lifetime of the component.
+ *
+ * The selector runs when an agent reads the observation; its return value is
+ * validated against the observation schema at runtime.
+ *
+ * @example
+ * ```tsx
+ * function DealPanel({ deal }: { deal: Deal }) {
+ *   useAgentSurface({
+ *     handle: "crm://deals/panel/main",
+ *     title: "Deal Panel",
+ *     capabilities: ["read"],
+ *   });
+ *
+ *   useAgentObservation(
+ *     "crm://deals/panel/main",
+ *     defineObservation({
+ *       name: "dealState",
+ *       description: "Current deal being edited",
+ *       schema: z.object({ id: z.string(), stage: z.string() }),
+ *     }),
+ *     () => ({ id: deal.id, stage: deal.stage }),
+ *     { debounceMs: 100 }
+ *   );
+ * }
+ * ```
+ */
 export function useAgentObservation<T>(
   handle: AgentHandle,
   definition: ObservationDefinition<T>,
