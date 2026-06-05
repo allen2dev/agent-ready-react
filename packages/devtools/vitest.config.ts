@@ -1,3 +1,7 @@
 import { createVitestConfig } from "@agent-ready/vitest-config";
 
-export default createVitestConfig();
+export default createVitestConfig({
+  test: {
+    environment: "jsdom"
+  }
+});

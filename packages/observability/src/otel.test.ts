@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
-import { defineAction } from "@agent-ready/schema";
+import { defineAction, defineObservation } from "@agent-ready/schema";
 import { createAgentRuntime } from "@agent-ready/runtime";
 import { attachOtelTracing } from "./otel.js";
 import { attachOtelTracingAuto, resetOtelCacheForTests } from "./otel-node.js";
@@ -77,7 +77,30 @@ describe("attachOtelTracing", () => {
     expect(spans).toHaveLength(1);
     expect(spans[0]?.name).toBe("agent.action.invoke");
     expect(spans[0]?.attributes["agent.action"]).toBe("ping");
+    expect(spans[0]?.attributes["agent.ok"]).toBe(true);
     expect(spans[0]?.ended).toBe(true);
+  });
+
+  it("records agent.observation.read span", () => {
+    const spans: RecordedSpan[] = [];
+    const runtime = setupRuntime();
+    attachOtelTracing(runtime, { tracer: createMockTracer(spans) as never });
+
+    runtime.registerObservation(handle, {
+      definition: defineObservation({
+        name: "state",
+        description: "State",
+        schema: z.object({ n: z.number() })
+      }),
+      selector: () => ({ n: 1 })
+    });
+
+    runtime.readObservation({ handle, name: "state" });
+
+    expect(spans.some((span) => span.name === "agent.observation.read")).toBe(true);
+    expect(
+      spans.find((span) => span.name === "agent.observation.read")?.attributes["agent.ok"]
+    ).toBe(true);
   });
 
   it("no-ops when no tracer is provided", async () => {

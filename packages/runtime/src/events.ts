@@ -1,16 +1,35 @@
-import type { AgentError, AgentHandle } from "@agent-ready/schema";
+import type { AgentError, AgentHandle, SurfaceManifest } from "@agent-ready/schema";
+
+export type ActionInvokeResult =
+  | { ok: true; data?: unknown }
+  | { ok: false; error: AgentError };
 
 export interface AgentRuntimeEventMap {
-  "surface:registered": { handle: AgentHandle };
-  "surface:unregistered": { handle: AgentHandle };
-  "action:registered": { handle: AgentHandle; action: string };
+  "surface:registered": { handle: AgentHandle; manifest: SurfaceManifest };
+  "surface:unregistered": { handle: AgentHandle; manifest: SurfaceManifest };
+  "action:registered": { handle: AgentHandle; actionName: string };
+  "action:unregistered": { handle: AgentHandle; actionName: string };
   "action:invoked": {
     handle: AgentHandle;
-    action: string;
-    ok: boolean;
-    error?: AgentError;
+    actionName: string;
+    input: unknown;
+    result: ActionInvokeResult;
+    durationMs: number;
+    sessionId?: string;
   };
-  "policy:denied": { handle: AgentHandle; action: string };
+  "observation:read": {
+    handle: AgentHandle;
+    observationName: string;
+    byteSize: number;
+    durationMs: number;
+  };
+  "policy:denied": {
+    handle: AgentHandle;
+    actionName: string;
+    reason: string;
+    sessionId?: string;
+  };
+  "catalog:updated": { totalSurfaces: number };
 }
 
 export type AgentRuntimeEvent = keyof AgentRuntimeEventMap;
