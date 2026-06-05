@@ -295,6 +295,7 @@ defaultDeny → roleRules → environmentRules → perActionOverride → auditLo
 | ADR-004 | Handle 由应用显式分配 | 避免 React key 变化导致 Agent 寻址漂移 |
 | ADR-005 | Bridge 可选包 | 浏览器 bundle 最小化 |
 | ADR-006 | 默认 defaultDeny Policy | 企业合规友好 |
+| ADR-007 | React Hooks 显式传入 `handle` | 多 Surface 场景可预测；与隐式 Context 绑定相比更易测试 |
 
 ---
 

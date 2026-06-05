@@ -240,10 +240,17 @@ function useAgentSurface(manifest: SurfaceManifest): {
 
 ```typescript
 function useAgentAction<TIn, TOut>(
+  handle: AgentHandle,
   action: ActionDefinition<TIn, TOut>,
   handler: (input: TIn, ctx: ActionHandlerContext) => Promise<TOut> | TOut
 ): void;
 ```
+
+**约定**
+
+- 第一个参数 `handle` 必须与同组件（或父级）`useAgentSurface` 注册的 `manifest.handle` 一致。
+- 显式传入 handle，避免多 Surface 嵌套时的隐式绑定歧义；不要求 Context 传递 handle。
+- 调用前对应 Surface 须已通过 `useAgentSurface` 完成注册（同一 `useEffect` 周期内先 surface 后 action）。
 
 ```typescript
 interface ActionHandlerContext {
@@ -257,16 +264,17 @@ interface ActionHandlerContext {
 
 ```typescript
 function useAgentObservation<T>(
+  handle: AgentHandle,
   definition: ObservationDefinition<T>,
   selector: () => T,
   options?: {
     debounceMs?: number;
-    equalityFn?: (a: T, b: T) => boolean;
   }
 ): void;
 ```
 
-- `selector` 在每次 React render 后由 runtime 拉取（受 debounce 约束）
+- `handle` 与 `useAgentSurface` 注册的 handle 一致（同 `useAgentAction` 约定）
+- `selector` 在每次 React render 后由 runtime 拉取（受 `debounceMs` 约束）
 - 禁止在 selector 内产生副作用
 
 ### 4.5 `useAgentCatalog`（宿主 / 调试）
@@ -385,6 +393,8 @@ import { AgentReadyProvider, useAgentSurface, useAgentAction } from "@agent-read
 import { defineAction } from "@agent-ready/schema";
 import { z } from "zod";
 
+const handle = "marketing://forms/contact/main" as const;
+
 const submitForm = defineAction({
   name: "submitForm",
   description: "Submit the contact form",
@@ -394,12 +404,12 @@ const submitForm = defineAction({
 
 function ContactForm() {
   useAgentSurface({
-    handle: "marketing://forms/contact/main",
+    handle,
     title: "Contact Form",
     capabilities: ["act"],
   });
 
-  useAgentAction(submitForm, async (input) => {
+  useAgentAction(handle, submitForm, async (input) => {
     // 业务逻辑由应用实现
     await api.submitContact(input);
     return { submitted: true };
