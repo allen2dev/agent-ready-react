@@ -4,7 +4,7 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "build": "tsup src/index.ts src/otel-node.ts --format esm,cjs --dts --clean",
     "test": "vitest run",
     "lint": "node -e \"process.exit(0)\"",
     "typecheck": "tsc --noEmit"
@@ -14,6 +14,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./node": {
+      "types": "./dist/otel-node.d.ts",
+      "import": "./dist/otel-node.js",
+      "require": "./dist/otel-node.cjs"
     }
   },
   "peerDependencies": {

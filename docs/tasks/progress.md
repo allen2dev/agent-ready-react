@@ -6,6 +6,6 @@
 | P1-001 … P1-020 | ✅ |
 | P2-001 … P2-026 | ✅ |
 | P3-001 … P3-005, P3-007 … P3-014, P3-016 | ✅ |
-| P3-006 SSE, P3-011 OTel, P3-015 kitchen-sink | ✅ |
-| P3-017, P3-018 | ⏳ 待续 |
+| P3-006 SSE, P3-011 OTel, P3-015 kitchen-sink, P3-017 playground OTel | ✅ |
+| P3-018 | ⏳ 待续 |
 | P4 / PX | ⏳ 待续 |

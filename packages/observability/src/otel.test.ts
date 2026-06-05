@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { defineAction } from "@agent-ready/schema";
 import { createAgentRuntime } from "@agent-ready/runtime";
-import { attachOtelTracing, resetOtelCacheForTests } from "./otel.js";
+import { attachOtelTracing } from "./otel.js";
+import { attachOtelTracingAuto, resetOtelCacheForTests } from "./otel-node.js";
 
 interface RecordedSpan {
   name: string;
@@ -79,8 +80,7 @@ describe("attachOtelTracing", () => {
     expect(spans[0]?.ended).toBe(true);
   });
 
-  it("no-ops when OTel is unavailable and no tracer is provided", async () => {
-    resetOtelCacheForTests(null);
+  it("no-ops when no tracer is provided", async () => {
     const runtime = setupRuntime();
     const detach = attachOtelTracing(runtime);
 
@@ -96,7 +96,7 @@ describe("attachOtelTracing", () => {
     detach();
   });
 
-  it("uses @opentelemetry/api when installed", async () => {
+  it("uses @opentelemetry/api when installed via auto helper", async () => {
     resetOtelCacheForTests();
     const api = await import("@opentelemetry/api");
     const { BasicTracerProvider, SimpleSpanProcessor, InMemorySpanExporter } =
@@ -108,7 +108,7 @@ describe("attachOtelTracing", () => {
     api.trace.setGlobalTracerProvider(provider);
 
     const runtime = setupRuntime();
-    attachOtelTracing(runtime);
+    attachOtelTracingAuto(runtime);
 
     await runtime.invokeAction({
       handle,

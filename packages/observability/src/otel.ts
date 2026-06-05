@@ -1,46 +1,16 @@
-import { createRequire } from "module";
 import type { AgentResult, InvokeActionRequest } from "@agent-ready/schema";
 import type { AgentRuntime } from "@agent-ready/runtime";
+import type { Tracer } from "@opentelemetry/api";
 
-const require = createRequire(import.meta.url);
-
-type OtelApi = typeof import("@opentelemetry/api");
-type Tracer = import("@opentelemetry/api").Tracer;
-
-let cachedOtel: OtelApi | null | undefined;
-
-function loadOtelApi(): OtelApi | undefined {
-  if (cachedOtel !== undefined) {
-    return cachedOtel ?? undefined;
-  }
-  try {
-    cachedOtel = require("@opentelemetry/api") as OtelApi;
-    return cachedOtel;
-  } catch {
-    cachedOtel = null;
-    return undefined;
-  }
-}
+const SPAN_OK = 1;
+const SPAN_ERROR = 2;
 
 export interface AttachOtelTracingOptions {
   tracer?: Tracer;
   tracerName?: string;
 }
 
-/** Wrap runtime.invokeAction with an `agent.action.invoke` span when OTel is available. */
-export function attachOtelTracing(
-  runtime: AgentRuntime,
-  options: AttachOtelTracingOptions = {}
-): () => void {
-  const api = loadOtelApi();
-  const tracer =
-    options.tracer ??
-    api?.trace.getTracer(options.tracerName ?? "@agent-ready/observability");
-
-  if (!tracer) {
-    return () => {};
-  }
-
+function wrapInvokeAction(runtime: AgentRuntime, tracer: Tracer): () => void {
   const runtimeWithInvoke = runtime as AgentRuntime & {
     invokeAction: AgentRuntime["invokeAction"];
   };
@@ -59,18 +29,16 @@ export function attachOtelTracing(
 
     try {
       const result = await original(request);
-      if (api) {
-        if (!result.ok) {
-          span.setStatus({
-            code: api.SpanStatusCode.ERROR,
-            message: result.error.message
-          });
-          span.setAttribute("agent.error.code", result.error.code);
-        } else {
-          span.setStatus({ code: api.SpanStatusCode.OK });
-          if (result.meta?.durationMs != null) {
-            span.setAttribute("agent.duration_ms", result.meta.durationMs);
-          }
+      if (!result.ok) {
+        span.setStatus({
+          code: SPAN_ERROR,
+          message: result.error.message
+        });
+        span.setAttribute("agent.error.code", result.error.code);
+      } else {
+        span.setStatus({ code: SPAN_OK });
+        if (result.meta?.durationMs != null) {
+          span.setAttribute("agent.duration_ms", result.meta.durationMs);
         }
       }
       return result as AgentResult<T>;
@@ -78,9 +46,7 @@ export function attachOtelTracing(
       span.recordException(
         err instanceof Error ? err : new Error(String(err))
       );
-      if (api) {
-        span.setStatus({ code: api.SpanStatusCode.ERROR });
-      }
+      span.setStatus({ code: SPAN_ERROR });
       throw err;
     } finally {
       span.end();
@@ -92,6 +58,14 @@ export function attachOtelTracing(
   };
 }
 
-export function resetOtelCacheForTests(value?: OtelApi | null): void {
-  cachedOtel = value;
+/** Wrap runtime.invokeAction with an `agent.action.invoke` span. Requires an explicit tracer. */
+export function attachOtelTracing(
+  runtime: AgentRuntime,
+  options: AttachOtelTracingOptions = {}
+): () => void {
+  const tracer = options.tracer;
+  if (!tracer) {
+    return () => {};
+  }
+  return wrapInvokeAction(runtime, tracer);
 }

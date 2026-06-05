@@ -7,6 +7,11 @@ import {
   useAgentAction
 } from "@agent-ready/react";
 import { createAgentRuntime } from "@agent-ready/runtime";
+import {
+  disablePlaygroundOtel,
+  enablePlaygroundOtel,
+  isPlaygroundOtelEnabled
+} from "./otel-demo.js";
 
 const handle = "app://playground/demo/main" as const;
 const runtime = createAgentRuntime({
@@ -22,6 +27,34 @@ const greetAction = defineAction({
   input: z.object({ name: z.string().min(1) }),
   risk: "low"
 });
+
+function OtelPanel() {
+  const [enabled, setEnabled] = useState(isPlaygroundOtelEnabled());
+
+  function toggle() {
+    if (enabled) {
+      disablePlaygroundOtel();
+      setEnabled(false);
+      return;
+    }
+    enablePlaygroundOtel(runtime);
+    setEnabled(true);
+  }
+
+  return (
+    <section>
+      <h2>OpenTelemetry</h2>
+      <label>
+        <input type="checkbox" checked={enabled} onChange={toggle} />
+        Enable console span exporter
+      </label>
+      <p>
+        When enabled, each invoke emits an <code>agent.action.invoke</code> span to
+        the browser devtools console via OpenTelemetry ConsoleSpanExporter.
+      </p>
+    </section>
+  );
+}
 
 function DemoSurface() {
   useAgentSurface({
@@ -80,6 +113,7 @@ export function App() {
       session={{ sessionId: "playground", roles: ["playground"] }}
     >
       <h1>Agent Ready Playground</h1>
+      <OtelPanel />
       <DemoSurface />
       <CatalogPanel />
       <InvokePanel />
