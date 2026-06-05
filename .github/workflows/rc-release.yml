@@ -1,0 +1,33 @@
+name: RC Release
+
+on:
+  push:
+    tags:
+      - "v*-rc*"
+  workflow_dispatch:
+    inputs:
+      dist_tag:
+        description: npm dist-tag
+        default: rc
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm codegen:docs
+      - run: pnpm test
+      - run: pnpm changeset publish --tag ${{ github.event.inputs.dist_tag || 'rc' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

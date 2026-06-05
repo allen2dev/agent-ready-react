@@ -13,6 +13,7 @@
     "typecheck": "turbo run typecheck",
     "validate": "turbo run validate",
     "attw": "node scripts/check-exports.mjs",
+    "codegen:docs": "pnpm --filter @agent-ready/cli build && node packages/cli/dist/index.js codegen docs docs/api/index.md",
     "changeset": "changeset"
   },
   "devDependencies": {
