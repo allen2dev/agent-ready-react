@@ -25,7 +25,7 @@ export default function RscPage() {
         This page calls <code>declareAgentManifest</code> in a Server Component and
         hydrates the catalog via <code>AgentReadyProvider manifests</code>.
       </p>
-      <RscDemoClient manifests={manifests} handle={handle} />
+      <RscDemoClient manifests={manifests} />
     </main>
   );
 }

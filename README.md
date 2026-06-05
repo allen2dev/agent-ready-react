@@ -55,6 +55,7 @@ pnpm --filter playground dev
 
 ## Docs
 
+- [用户指南 / User Guide](./docs/user-guide.md) · [在线页面](https://allen2dev.github.io/agent-ready-react/)
 - [Architecture](./docs/architecture.md)
 - [SDK API](./docs/sdk-api.md)
 - [Tasks](./docs/tasks/README.md)

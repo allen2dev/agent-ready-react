@@ -1,21 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import type { AgentHandle } from "@agent-ready/schema";
-import {
-  AgentReadyProvider,
-  useAgentCatalog,
-  useAgentSurface
-} from "@agent-ready/react";
+import { AgentReadyProvider, useAgentCatalog } from "@agent-ready/react";
 import { createAgentRuntime } from "@agent-ready/runtime";
 
-export function RscDemoClient({
-  manifests,
-  handle
-}: {
-  manifests: string;
-  handle: AgentHandle;
-}) {
+export function RscDemoClient({ manifests }: { manifests: string }) {
   const runtime = useMemo(
     () =>
       createAgentRuntime({
@@ -30,18 +19,12 @@ export function RscDemoClient({
       manifests={manifests}
       session={{ sessionId: "kitchen-rsc", roles: ["demo"] }}
     >
-      <HydratedSurface handle={handle} />
+      <HydratedSurface />
     </AgentReadyProvider>
   );
 }
 
-function HydratedSurface({ handle }: { handle: AgentHandle }) {
-  useAgentSurface({
-    handle,
-    title: "Kitchen RSC Surface",
-    capabilities: ["act", "read"]
-  });
-
+function HydratedSurface() {
   const catalog = useAgentCatalog();
 
   return (
