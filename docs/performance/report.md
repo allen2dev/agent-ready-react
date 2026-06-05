@@ -1,6 +1,6 @@
 # Performance Report
 
-Environment: Node 20+, workspace `@agent-ready/runtime` catalog + invoke benchmark.
+Environment: Node 22+ (CI on Node 24), workspace `@agent-ready/runtime` catalog + invoke benchmark.
 
 ## Latest results (local)
 
