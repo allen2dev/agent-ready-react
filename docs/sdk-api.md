@@ -100,6 +100,22 @@ function validateAgentInput<T>(
 ): { success: true; data: T } | { success: false; error: AgentError };
 ```
 
+### 2.3 SchemaAdapter（Zod v3/v4）
+
+```typescript
+type ZodMajorVersion = 3 | 4;
+
+interface SchemaAdapter {
+  readonly version: ZodMajorVersion;
+  safeParse<T>(schema: ZodSchema<T>, input: unknown): SchemaParseResult<T>;
+  toJsonSchema(schema: ZodSchema): JSONSchema7;
+}
+
+function detectZodMajorVersion(): ZodMajorVersion;
+function createSchemaAdapter(version?: ZodMajorVersion): SchemaAdapter;
+function getActiveSchemaAdapter(): SchemaAdapter;
+```
+
 ---
 
 ## 3. `@agent-ready/runtime`
@@ -113,6 +129,7 @@ interface AgentRuntimeConfig {
   logger?: AgentLogger;
   maxCatalogEntries?: number;
   actionTimeoutMs?: number;
+  rateLimit?: RateLimitProvider;
 }
 
 function createAgentRuntime(config?: AgentRuntimeConfig): AgentRuntime;
@@ -203,6 +220,48 @@ interface PolicyConfig {
   rules?: PolicyRule[];
 }
 ```
+
+### 3.5 Enterprise policy helpers (v1.0)
+
+```typescript
+function createOidcRolePolicyProvider(config: {
+  mapClaimsToRoles: (claims: Record<string, unknown>) => string[];
+  policy?: PolicyConfig;
+  claimsMetadataKey?: string; // default oidcClaims JSON in session.metadata
+}): PolicyProvider;
+
+function createTenantPolicyProvider(config: {
+  allowlist: Record<string, AgentHandle[]>;
+  tenantMetadataKey?: string; // default tenantId
+  policy?: PolicyConfig;
+}): PolicyProvider;
+```
+
+### 3.6 Audit (v1.0)
+
+```typescript
+interface AuditSink {
+  emit(entry: AuditEntry): void | Promise<void>;
+}
+
+function attachAuditSink(runtime: AgentRuntime, sink: AuditSink): () => void;
+function createConsoleAuditSink(): AuditSink;
+function createHttpAuditSink(options: { url: string; batchSize?: number }): AuditSink;
+```
+
+### 3.7 Rate limiting (v1.0)
+
+```typescript
+interface RateLimitProvider {
+  check(ctx: { sessionId: string; handle: AgentHandle; action: string }): Promise<boolean> | boolean;
+}
+
+function createSessionRateLimiter(options: { maxRequests: number; windowMs: number }): RateLimitProvider;
+function createActionRateLimiter(options: { maxRequests: number; windowMs: number }): RateLimitProvider;
+function composeRateLimiters(...providers: RateLimitProvider[]): RateLimitProvider;
+```
+
+Exceeded limits return `AGENT_RATE_LIMITED`.
 
 ---
 
@@ -365,6 +424,18 @@ function serializeAgentManifests(): string;
 | Resource URI | `agent://observation/{handle}/{name}` |
 | Resource read | `readObservation` |
 
+**SSE transport**: `createMcpSseServer(runtime)` exported from `@agent-ready/mcp/sse`.
+
+---
+
+## 6.1 `@agent-ready/observability`
+
+```typescript
+function attachRuntimeListener(runtime: AgentRuntime, sink: EventSink, options?): () => void;
+function attachOtelTracing(runtime: AgentRuntime, options?: { tracer?: Tracer }): () => void;
+// Node-only auto tracer: import from "@agent-ready/observability/node"
+```
+
 ---
 
 ## 7. `@agent-ready/testing`
@@ -478,6 +549,7 @@ import { useAgentTransaction } from "@agent-ready/react/experimental";
 | RSC manifest | — | — | ✅ | ✅ |
 | Observation stream | — | — | ✅ | ✅ |
 | OpenTelemetry spans | — | — | ✅ | ✅ |
+| Audit + rate limit | — | — | — | ✅ |
 | DevTools | — | ✅ | ✅ | ✅ |
 
 ---

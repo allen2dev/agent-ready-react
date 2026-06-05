@@ -30,14 +30,17 @@ export function createHttpAuditSink(options: HttpAuditSinkOptions): AuditSink {
     await post(entries);
   }
 
-  return {
+  const sink: AuditSink & { flush: () => Promise<void> } = {
     emit(entry: AuditEntry) {
       buffer.push(entry);
       if (buffer.length >= batchSize) {
         flushPromise = flush();
       }
-    }
+    },
+    flush
   };
+
+  return sink;
 }
 
 export async function flushHttpAuditSink(sink: AuditSink): Promise<void> {

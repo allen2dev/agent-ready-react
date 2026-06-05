@@ -7,7 +7,7 @@ Release: **0.3.0-rc**
 
 | Package | Version | Exports |
 |---------|---------|---------|
-| @agent-ready/schema | 0.3.0-rc | 6 |
+| @agent-ready/schema | 0.3.0-rc | 8 |
 | @agent-ready/runtime | 0.3.0-rc | 5 |
 | @agent-ready/react | 0.3.0-rc | 5 |
 | @agent-ready/react/rsc | 0.3.0-rc | 2 |

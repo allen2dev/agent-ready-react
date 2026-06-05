@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
         with:
           version: 9.15.0
@@ -23,5 +25,44 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      - run: pnpm depcruise
+      - run: pnpm audit --prod --audit-level=high
       - run: pnpm codegen:docs
       - run: git diff --exit-code docs/api/
+      - name: Verify changeset on package changes
+        if: github.event_name == 'pull_request'
+        run: node scripts/check-changeset.mjs origin/${{ github.base_ref }}
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @agent-ready/schema build
+      - run: pnpm --filter @agent-ready/runtime build
+      - run: pnpm test:coverage
+
+  schema-zod-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        zod-version: ["3.24.1"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm add -D zod@${{ matrix.zod-version }} --filter @agent-ready/schema
+      - run: pnpm --filter @agent-ready/schema test -- adapter

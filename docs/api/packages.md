@@ -9,6 +9,8 @@
 |--------|------|-------|
 | `defineAction` | function | `.` |
 | `defineObservation` | function | `.` |
+| `createSchemaAdapter` | function | `.` |
+| `detectZodMajorVersion` | function | `.` |
 | `toJsonSchema` | function | `.` |
 | `validateAgentInput` | function | `.` |
 | `AgentHandle` | type | `.` |

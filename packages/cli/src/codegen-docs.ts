@@ -23,6 +23,8 @@ const PACKAGE_EXPORTS: PackageDoc[] = [
     entries: [
       { symbol: "defineAction", kind: "function" },
       { symbol: "defineObservation", kind: "function" },
+      { symbol: "createSchemaAdapter", kind: "function" },
+      { symbol: "detectZodMajorVersion", kind: "function" },
       { symbol: "toJsonSchema", kind: "function" },
       { symbol: "validateAgentInput", kind: "function" },
       { symbol: "AgentHandle", kind: "type" },

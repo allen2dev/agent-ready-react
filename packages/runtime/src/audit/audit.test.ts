@@ -123,4 +123,27 @@ describe("audit.http", () => {
     expect(bodies).toHaveLength(1);
     expect(bodies[0]).toContain('"action":"a"');
   });
+
+  it("retries once when server returns error", async () => {
+    const { createHttpAuditSink } = await import("./http.js");
+    let attempts = 0;
+    const sink = createHttpAuditSink({
+      url: "https://audit.example/events",
+      batchSize: 1,
+      fetchImpl: async () => {
+        attempts += 1;
+        return new Response(null, { status: attempts === 1 ? 500 : 200 });
+      }
+    });
+
+    sink.emit({
+      type: "action.invoked",
+      handle,
+      action: "retry",
+      timestamp: 1
+    });
+    await sink.flush();
+
+    expect(attempts).toBe(2);
+  });
 });

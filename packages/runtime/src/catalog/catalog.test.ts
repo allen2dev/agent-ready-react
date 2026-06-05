@@ -24,4 +24,28 @@ describe("catalog", () => {
     const page2 = rt.getCatalog({ limit: 2, cursor: page1.cursor });
     expect(page2.surfaces).toHaveLength(1);
   });
+
+  it("filters by scope, tags, and capability", () => {
+    const rt = createAgentRuntime();
+    rt.registerSurface({
+      manifest: {
+        handle: "app://crm/deals/main",
+        title: "CRM",
+        capabilities: ["act", "read"],
+        tags: ["sales"]
+      }
+    });
+    rt.registerSurface({
+      manifest: {
+        handle: "app://hr/forms/main",
+        title: "HR",
+        capabilities: ["read"],
+        tags: ["internal"]
+      }
+    });
+
+    expect(rt.getCatalog({ scope: "crm" }).total).toBe(1);
+    expect(rt.getCatalog({ tags: ["sales"] }).total).toBe(1);
+    expect(rt.getCatalog({ capability: "act" }).total).toBe(1);
+  });
 });
