@@ -269,3 +269,4 @@ gantt
 - [architecture.md](./architecture.md)
 - [package-design.md](./package-design.md)
 - [sdk-api.md](./sdk-api.md)
+- [tasks/README.md](./tasks/README.md) — 可执行任务拆分（≤2h / 可独立测试）
