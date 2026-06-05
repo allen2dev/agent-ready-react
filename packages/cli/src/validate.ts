@@ -9,5 +9,6 @@ export function validateCommand(manifestPath: string) {
     console.error("Validation failed:", result.error.flatten());
     process.exit(1);
   }
-  console.log("OK:", result.data.handle);
+  const manifest = result.data;
+  console.log("OK:", manifest.handle);
 }

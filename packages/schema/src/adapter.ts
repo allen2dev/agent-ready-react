@@ -1,8 +1,5 @@
-import { createRequire } from "module";
 import type { ZodType, ZodTypeDef } from "zod";
 import { toJsonSchema, type JsonSchema } from "./json-schema.js";
-
-const require = createRequire(import.meta.url);
 
 export type ZodMajorVersion = 3 | 4;
 
@@ -19,16 +16,6 @@ export interface SchemaAdapter {
     input: unknown
   ): SchemaParseResult<T>;
   toJsonSchema(schema: ZodType<unknown, ZodTypeDef, unknown>): JsonSchema;
-}
-
-export function detectZodMajorVersion(): ZodMajorVersion {
-  try {
-    const pkg = require("zod/package.json") as { version?: string };
-    const major = Number.parseInt(String(pkg.version ?? "3").split(".")[0] ?? "3", 10);
-    return major >= 4 ? 4 : 3;
-  } catch {
-    return 3;
-  }
 }
 
 function createZod3Adapter(): SchemaAdapter {
@@ -51,11 +38,11 @@ function createZod4Adapter(): SchemaAdapter {
   return { ...base, version: 4 };
 }
 
-export function createSchemaAdapter(version?: ZodMajorVersion): SchemaAdapter {
-  const resolved = version ?? detectZodMajorVersion();
-  return resolved === 4 ? createZod4Adapter() : createZod3Adapter();
+export function createSchemaAdapter(version: ZodMajorVersion = 3): SchemaAdapter {
+  return version === 4 ? createZod4Adapter() : createZod3Adapter();
 }
 
+/** Browser-safe default; use `@agent-ready/schema/adapter-node` for auto-detect. */
 export function getActiveSchemaAdapter(): SchemaAdapter {
-  return createSchemaAdapter();
+  return createSchemaAdapter(3);
 }

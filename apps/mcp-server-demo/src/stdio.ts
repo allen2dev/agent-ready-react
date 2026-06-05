@@ -20,12 +20,15 @@ runtime.registerAction(handle, {
     description: "Say hello",
     input: z.object({ name: z.string() })
   }),
-  handler: (input) => ({ message: `Hello, ${input.name}` })
+  handler: (input) => {
+    const { name } = input as { name: string };
+    return { message: `Hello, ${name}` };
+  }
 });
 
 const handlers = createMcpHandlers(runtime);
 
-process.stdin.on("data", async (chunk) => {
+process.stdin.on("data", async (chunk: Buffer) => {
   const msg = JSON.parse(chunk.toString()) as {
     id: number;
     method: keyof ReturnType<typeof createMcpHandlers>;

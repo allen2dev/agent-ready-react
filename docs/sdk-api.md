@@ -116,6 +116,8 @@ function createSchemaAdapter(version?: ZodMajorVersion): SchemaAdapter;
 function getActiveSchemaAdapter(): SchemaAdapter;
 ```
 
+Node auto-detect: import from `@agent-ready/schema/adapter-node`.
+
 ---
 
 ## 3. `@agent-ready/runtime`

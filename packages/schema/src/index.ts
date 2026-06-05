@@ -6,7 +6,6 @@ export * from "./validate.js";
 export * from "./json-schema.js";
 export {
   createSchemaAdapter,
-  detectZodMajorVersion,
   getActiveSchemaAdapter,
   type SchemaAdapter,
   type SchemaParseResult,

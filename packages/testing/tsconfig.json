@@ -1,6 +1,7 @@
 {
   "extends": "@agent-ready/tsconfig/base.json",
   "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"],
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src"

@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import {
   createSchemaAdapter,
-  detectZodMajorVersion,
   getActiveSchemaAdapter
 } from "./adapter.js";
+import {
+  detectZodMajorVersion,
+  getActiveSchemaAdapterAuto
+} from "./adapter-node.js";
 
 describe("schema adapter", () => {
   it("detects installed zod major version", () => {
@@ -20,6 +23,11 @@ describe("schema adapter", () => {
     expect(ok.success).toBe(true);
     expect(ok.data).toEqual({ n: 1 });
     expect(bad.success).toBe(false);
+  });
+
+  it("auto-detects zod version in node helper", () => {
+    const adapter = getActiveSchemaAdapterAuto();
+    expect([3, 4]).toContain(adapter.version);
   });
 
   it("converts schema to JSON schema", () => {

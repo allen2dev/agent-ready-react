@@ -10,7 +10,8 @@
 | `defineAction` | function | `.` |
 | `defineObservation` | function | `.` |
 | `createSchemaAdapter` | function | `.` |
-| `detectZodMajorVersion` | function | `.` |
+| `getActiveSchemaAdapter` | function | `.` |
+| `detectZodMajorVersion` | function | `./adapter-node` |
 | `toJsonSchema` | function | `.` |
 | `validateAgentInput` | function | `.` |
 | `AgentHandle` | type | `.` |

@@ -15,7 +15,21 @@ function changedPackageFiles() {
   });
   return diff
     .split("\n")
-    .filter((line) => line.startsWith("packages/") && !line.includes("/dist/"));
+    .filter((line) => /^packages\/[^/]+\//.test(line) && !line.includes("/dist/"));
+}
+
+function changedChangesetInDiff() {
+  const diff = execSync(`git diff --name-only ${baseRef}...HEAD`, {
+    encoding: "utf8"
+  });
+  return diff
+    .split("\n")
+    .some(
+      (line) =>
+        line.startsWith(".changeset/") &&
+        line.endsWith(".md") &&
+        !line.endsWith("README.md")
+    );
 }
 
 function hasChangeset() {
@@ -31,7 +45,7 @@ if (packageChanges.length === 0) {
   process.exit(0);
 }
 
-if (hasChangeset()) {
+if (hasChangeset() || changedChangesetInDiff()) {
   console.log("Changeset present for package changes");
   process.exit(0);
 }
